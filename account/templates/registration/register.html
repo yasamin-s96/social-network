@@ -4,7 +4,7 @@
 {% load static %}
 
 {% block script %}
-	<script src="{% static "network/signup.js" %}"></script>
+    <script src="{% static "network/signup.js" %}"></script>
 {% endblock %}
 
 {% block title %}
@@ -68,10 +68,7 @@
             </div>
             <div class="form-group">
                 <div class="custom-file">
-                    {#                    <input type="file" name="profile" class="form-control custom-file-input" id="profile"#}
-                    {#                           accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true"#}
-                    {#                           aria-describedby="inputGroupFileAddon01">#}
-                    {% render_field profile_form.profile_image class="form-control custom-file-input" id="profile" accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true" aria-describedby="inputGroupFileAddon01" %}
+                    {% render_field profile_form.profile_image class="form-control custom-file-input" id="profile" data-focusable="true" aria-describedby="inputGroupFileAddon01" %}
                     <label class="custom-file-label" for="profile"><span
                             style="color: #6c757d;">Choose profile picture<span></label>
                     {% if profile_form.profile_image.errors %}
@@ -83,10 +80,7 @@
             </div>
             <div class="form-group">
                 <div class="custom-file">
-                    {#                    <input type="file" name="cover" class="form-control custom-file-input" id="cover"#}
-                    {#                           accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true"#}
-                    {#                           aria-describedby="inputGroupFileAddon01">#}
-                    {% render_field profile_form.profile_cover class="form-control custom-file-input" id="cover" accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true" aria-describedby="inputGroupFileAddon01" %}
+                    {% render_field profile_form.profile_cover class="form-control custom-file-input" id="cover" data-focusable="true" aria-describedby="inputGroupFileAddon01" %}
                     <label class="custom-file-label" for="cover"><span
                             style="color: #6c757d;">Choose cover picture<span></label>
                     {% if profile_form.profile_cover.errors %}
@@ -96,7 +90,6 @@
                     {% endif %}
                 </div>
             </div>
-
 
             <div class="text-center">
                 <input class="btn btn-primary" type="submit" value="Sign Up" style="margin-top: 10px; width: 95%;">
