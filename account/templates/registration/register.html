@@ -3,6 +3,10 @@
 
 {% load static %}
 
+{% block script %}
+	<script src="{% static "network/signup.js" %}"></script>
+{% endblock %}
+
 {% block title %}
     Sign Up | Network
 {% endblock %}
@@ -18,64 +22,80 @@
         </div>
 
         <form action="{% url 'register' %}" method="post" id="signin-form"
-              style="width: 100%;margin-bottom: 5vh;" novalidate>
+              style="width: 100%;margin-bottom: 5vh;" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             <div class="form-group">
                 <div class="form-row align-items-center">
                     <div class="col-sm-6 my-1">
-                        {% render_field form.first_name class="form-control inp fname" placeholder="First Name" autocomplete="off" %}
+                        {% render_field auth_form.first_name class="form-control inp fname" placeholder="First Name" autocomplete="off" %}
                     </div>
                     <div class="col-sm-6 my-1">
-                        {% render_field form.last_name class="form-control inp lname" placeholder="Last Name" autocomplete="off" %}
+                        {% render_field auth_form.last_name class="form-control inp lname" placeholder="Last Name" autocomplete="off" %}
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                {% render_field form.username class="form-control inp usrname" placeholder="Username *" autocomplete="off" %}
-                {% if form.username.errors %}
-                    {% for error in form.username.errors %}
+                {% render_field auth_form.username class="form-control inp usrname" placeholder="Username *" autocomplete="off" %}
+                {% if auth_form.username.errors %}
+                    {% for error in auth_form.username.errors %}
                         <p class="fs-6 text-danger">{{ error }}</p>
                     {% endfor %}
                 {% endif %}
             </div>
             <div class="form-group">
-                {% render_field form.email class="form-control inp email" placeholder="Email Address *" autocomplete="off" %}
-                {% if form.email.errors %}
-                    {% for error in form.email.errors %}
+                {% render_field auth_form.email class="form-control inp email" placeholder="Email Address *" autocomplete="off" %}
+                {% if auth_form.email.errors %}
+                    {% for error in auth_form.email.errors %}
                         <p class="fs-6 text-danger">{{ error }}</p>
                     {% endfor %}
                 {% endif %}
             </div>
             <div class="form-group">
-                {% render_field form.password class="form-control inp pswd" placeholder="Password *" autocomplete="off" %}
-                {% if form.password.errors %}
-                    {% for error in form.password.errors %}
+                {% render_field auth_form.password class="form-control inp pswd" placeholder="Password *" autocomplete="off" %}
+                {% if auth_form.password.errors %}
+                    {% for error in auth_form.password.errors %}
                         <p class="fs-6 text-danger">{{ error }}</p>
                     {% endfor %}
                 {% endif %}
             </div>
             <div class="form-group">
-                {% render_field form.password2 class="form-control inp cpswd" placeholder="Confirm Password *" autocomplete="off" %}
-                {% if form.password2.errors %}
-                    {% for error in form.password2.errors %}
+                {% render_field auth_form.password2 class="form-control inp cpswd" placeholder="Confirm Password *" autocomplete="off" %}
+                {% if auth_form.password2.errors %}
+                    {% for error in auth_form.password2.errors %}
                         <p class="fs-6 text-danger">{{ error }}</p>
                     {% endfor %}
                 {% endif %}
             </div>
-            {#            <div class="form-group">#}
-            {#                <div class="custom-file">#}
-            {#                    <input type="file" name="profile" class="form-control custom-file-input" id="profile" accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true" aria-describedby="inputGroupFileAddon01">#}
-            {#                    <label class="custom-file-label" for="profile"><span style="color: #6c757d;">Choose profile picture<span></label>#}
-            {#                    <span class="star small"></span>#}
-            {#                </div>#}
-            {#            </div>#}
-            {#            <div class="form-group">#}
-            {#                <div class="custom-file">#}
-            {#                    <input type="file" name="cover" class="form-control custom-file-input" id="cover" accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true" aria-describedby="inputGroupFileAddon01">#}
-            {#                    <label class="custom-file-label" for="cover"><span style="color: #6c757d;">Choose cover picture<span></label>#}
-            {#                    <span class="star small"></span>#}
-            {#                </div>#}
-            {#            </div>#}
+            <div class="form-group">
+                <div class="custom-file">
+                    {#                    <input type="file" name="profile" class="form-control custom-file-input" id="profile"#}
+                    {#                           accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true"#}
+                    {#                           aria-describedby="inputGroupFileAddon01">#}
+                    {% render_field profile_form.profile_image class="form-control custom-file-input" id="profile" accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true" aria-describedby="inputGroupFileAddon01" %}
+                    <label class="custom-file-label" for="profile"><span
+                            style="color: #6c757d;">Choose profile picture<span></label>
+                    {% if profile_form.profile_image.errors %}
+                        {% for error in profile_form.profile_image.errors %}
+                            <p class="fs-6 text-danger">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    {#                    <input type="file" name="cover" class="form-control custom-file-input" id="cover"#}
+                    {#                           accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true"#}
+                    {#                           aria-describedby="inputGroupFileAddon01">#}
+                    {% render_field profile_form.profile_cover class="form-control custom-file-input" id="cover" accept="image/jpeg,image/png,image/webp,image/gif" data-focusable="true" aria-describedby="inputGroupFileAddon01" %}
+                    <label class="custom-file-label" for="cover"><span
+                            style="color: #6c757d;">Choose cover picture<span></label>
+                    {% if profile_form.profile_cover.errors %}
+                        {% for error in profile_form.profile_cover.errors %}
+                            <p class="fs-6 text-danger">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
 
 
             <div class="text-center">
