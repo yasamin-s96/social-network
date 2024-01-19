@@ -7,10 +7,10 @@ User = get_user_model()
 # Create your models here.
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     text_content = models.CharField(max_length=256)
     image_content = models.ImageField()
-    likes = models.ManyToManyField(User, related_name='liked_posts')
+    likes = models.ManyToManyField(User, related_name='liked_posts', null=True, blank=True)
     posted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

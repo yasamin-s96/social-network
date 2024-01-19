@@ -6,8 +6,8 @@ from .validators import validate_image
 # Create your models here.
 class User(AbstractUser):
     email = models.EmailField()
-    saved_posts = models.ManyToManyField('network.Post', related_name="saved_by")
-    follows = models.ManyToManyField('self', symmetrical=False)
+    saved_posts = models.ManyToManyField('network.Post', related_name="saved_by", null=True, blank=True)
+    follows = models.ManyToManyField('self', symmetrical=False, null=True, blank=True)
 
 
 def create_profile_image_path(instance, filename):
