@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from utils.validators import validate_image
 
 User = get_user_model()
 
@@ -8,9 +9,9 @@ User = get_user_model()
 
 class Post(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-    text_content = models.CharField(max_length=256)
-    image_content = models.ImageField()
-    likes = models.ManyToManyField(User, related_name='liked_posts', null=True, blank=True)
+    text_content = models.CharField(max_length=256, blank=True)
+    image_content = models.ImageField(upload_to='posts/%Y/%m/%d', validators=[validate_image])
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     posted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

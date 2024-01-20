@@ -133,7 +133,7 @@ svg{
     line-height: .7em;
     font-weight: 800;
     background-color: #fff;
-    z-index: 1000;
+    /*z-index: 1000;*/
 }
 
 .left-div-content{
