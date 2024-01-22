@@ -57,24 +57,52 @@ function confirm_delete(id) {
     small_popup.querySelector('#delete_post_btn').setAttribute('onclick', `delete_post(${id})`);
 }
 
+// function delete_post(id) {
+//     remove_popup();
+//     setTimeout(() => {
+//         let post = 0;
+//         document.querySelectorAll('.post').forEach(eachpost => {
+//             if(eachpost.dataset.post_id==id) {
+//                 post = eachpost;
+//             }
+//         });
+//         post.style.animationPlayState = 'running';
+//         post.addEventListener('animationend', () => {
+//             post.remove();
+//         });
+//         fetch('/n/post/'+parseInt(id)+'/delete', {
+//             method: 'PUT'
+//         });
+//     },200);
+// }
 function delete_post(id) {
     remove_popup();
     setTimeout(() => {
-        let post = 0;
-        document.querySelectorAll('.post').forEach(eachpost => {
-            if(eachpost.dataset.post_id==id) {
-                post = eachpost;
-            }
-        });
-        post.style.animationPlayState = 'running';
-        post.addEventListener('animationend', () => {
-            post.remove();
-        });
-        fetch('/n/post/'+parseInt(id)+'/delete', {
-            method: 'PUT'
-        });
-    },200);
+        const post = document.querySelector(`.post[data-post_id="${id}"]`);
+
+        if (post) {
+            // Use DELETE method for deletion and handle the response
+            fetch(`/network/post/${parseInt(id)}/delete/`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Remove the post only if the response is OK
+                post.style.animationPlayState = 'running';
+                post.addEventListener('animationend', () => {
+                    post.remove();
+                });
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+                // Optionally, handle the UI update for error scenario
+            });
+        }
+    }, 200);
 }
+
 
 function edit_post(element) {
     let post = element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;

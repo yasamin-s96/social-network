@@ -5,8 +5,7 @@ from utils.validators import validate_image
 
 # Create your models here.
 class User(AbstractUser):
-    email = models.EmailField()
-    saved_posts = models.ManyToManyField('network.Post', related_name="saved_by", blank=True)
+    email = models.EmailField(unique=True)
     follows = models.ManyToManyField('self', symmetrical=False, blank=True)
 
 

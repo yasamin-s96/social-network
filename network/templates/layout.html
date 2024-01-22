@@ -16,7 +16,7 @@
 <body>
 {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="z-index: 2000;">
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert" style="z-index: 2000;">
             {{ message }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -120,7 +120,7 @@
 </div>
 <div class="body" data-page="{{ page }}">
     <div class="sidenav">
-        <a href="{% url 'network:index' %}" class="navbar-brand">
+        <a href="{% url 'network:posts_list' %}" class="navbar-brand">
             <img src="{% static 'network/Images/logo.png' %}" height="31px">
         </a>
         <div style="height: 100%;">
@@ -128,7 +128,7 @@
                 <div>
                     <ul>
                         <li class="nav-item" id="all_posts">
-                            <a href="{% url 'network:index' %}" class="nav-link">
+                            <a href="{% url 'network:posts_list' %}" class="nav-link">
                                 <div>
                                     <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-card-heading"
                                          fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -144,7 +144,7 @@
                         </li>
                         {% if user.is_authenticated %}
                             <li class="nav-item" id="following">
-                                <a href="" class="nav-link">
+                                <a href="{% url "network:following_posts_list" %}" class="nav-link">
                                     <div>
                                         <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-people"
                                              fill="currentColor" xmlns="http://www.w3.org/2000/svg">

@@ -10,8 +10,9 @@ User = get_user_model()
 class Post(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     text_content = models.CharField(max_length=256, blank=True)
-    image_content = models.ImageField(upload_to='posts/%Y/%m/%d', validators=[validate_image])
+    image_content = models.ImageField(upload_to='posts/%Y/%m/%d', blank=True, validators=[validate_image])
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    saved_by = models.ManyToManyField(User, related_name="saved_posts", blank=True)
     posted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
