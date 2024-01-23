@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.shortcuts import render, redirect
+from django.db.models import Count
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -15,7 +16,6 @@ from network.models import Post
 
 
 # Create your views here.
-
 
 @require_POST
 @login_required
@@ -41,12 +41,32 @@ def post_create(request):
 def post_delete(request, post_id):
     if request.method == 'DELETE':
         user = request.user
-        post = Post.objects.get(pk=post_id)
+        post = get_object_or_404(Post, pk=post_id)
         if user.is_authenticated and post.creator == user:
             post.delete()
             return HttpResponse('Post deleted', status=200)
 
     return HttpResponse('Unauthorized action', status=401)
+
+
+@login_required
+def post_like_unlike(request, post_id):
+    user = request.user
+    post = get_object_or_404(Post, pk=post_id)
+
+    # Perform like
+    if request.method == 'POST':
+        if user not in post.likes.all():
+            post.likes.add(user)
+            return HttpResponse(f'Post liked by {user}', status=200)
+
+    # Perform unlike
+    if request.method == 'DELETE':
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return HttpResponse(f'Post unliked by {user}', status=200)
+
+    return HttpResponse(status=400)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
@@ -60,7 +80,7 @@ class AllPostsView(ListView):
         return context
 
     def get_queryset(self):
-        posts = Post.objects.select_related('creator').all()
+        posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator').prefetch_related('likes')
         return posts
 
 
@@ -77,6 +97,7 @@ class FollowingPostsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         following_users_ids = user.follows.values_list('id', flat=True)
-        following_users_posts = Post.objects.select_related('creator').filter(creator__id__in=following_users_ids)
+        following_users_posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator') \
+            .prefetch_related('likes').filter(creator__id__in=following_users_ids)
 
         return following_users_posts
