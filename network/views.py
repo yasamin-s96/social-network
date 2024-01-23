@@ -2,12 +2,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.urls import reverse
-from django.views.decorators.http import require_POST, require_GET
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import ListView
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 
 from network import utils
 from network.models import Post
@@ -48,7 +49,7 @@ def post_delete(request, post_id):
     return HttpResponse('Unauthorized action', status=401)
 
 
-
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class AllPostsView(ListView):
     template_name = 'network/index.html'
     paginate_by = 10
@@ -63,6 +64,7 @@ class AllPostsView(ListView):
         return posts
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class FollowingPostsView(LoginRequiredMixin, ListView):
     template_name = 'network/index.html'
     paginate_by = 10

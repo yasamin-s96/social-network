@@ -57,33 +57,18 @@ function confirm_delete(id) {
     small_popup.querySelector('#delete_post_btn').setAttribute('onclick', `delete_post(${id})`);
 }
 
-// function delete_post(id) {
-//     remove_popup();
-//     setTimeout(() => {
-//         let post = 0;
-//         document.querySelectorAll('.post').forEach(eachpost => {
-//             if(eachpost.dataset.post_id==id) {
-//                 post = eachpost;
-//             }
-//         });
-//         post.style.animationPlayState = 'running';
-//         post.addEventListener('animationend', () => {
-//             post.remove();
-//         });
-//         fetch('/n/post/'+parseInt(id)+'/delete', {
-//             method: 'PUT'
-//         });
-//     },200);
-// }
 function delete_post(id) {
     remove_popup();
     setTimeout(() => {
         const post = document.querySelector(`.post[data-post_id="${id}"]`);
+        const csrftoken = Cookies.get('csrftoken')
 
         if (post) {
             // Use DELETE method for deletion and handle the response
             fetch(`/network/post/${parseInt(id)}/delete/`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: "same-origin"
             })
             .then(response => {
                 if (!response.ok) {
