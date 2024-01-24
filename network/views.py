@@ -69,6 +69,26 @@ def post_like_unlike(request, post_id):
     return HttpResponse(status=400)
 
 
+@login_required
+def post_save_unsave(request, post_id):
+    user = request.user
+    post = get_object_or_404(Post, pk=post_id)
+
+    # Perform save
+    if request.method == 'POST':
+        if user not in post.saved_by.all():
+            post.saved_by.add(user)
+            return HttpResponse(f'Post saved by {user}', status=200)
+
+    # Perform unsave
+    if request.method == 'DELETE':
+        if user in post.saved_by.all():
+            post.saved_by.remove(user)
+            return HttpResponse(f'Post unsaved by {user}', status=200)
+
+    return HttpResponse(status=400)
+
+
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class AllPostsView(ListView):
     template_name = 'network/index.html'
@@ -101,3 +121,21 @@ class FollowingPostsView(LoginRequiredMixin, ListView):
             .prefetch_related('likes').filter(creator__id__in=following_users_ids)
 
         return following_users_posts
+
+
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class SavedPostsView(LoginRequiredMixin, ListView):
+    template_name = 'network/index.html'
+    paginate_by = 10
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page'] = 'saved'
+        return context
+
+    def get_queryset(self):
+        user = self.request.user
+        saved_posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator') \
+            .prefetch_related('likes').filter(saved_by=user)
+
+        return saved_posts
