@@ -440,7 +440,7 @@ function show_comment(element) {
     }
     comment_div.querySelector('#spinner').style.display = 'block';
     comment_div.style.display = 'block';
-    fetch('/n/post/' + parseInt(post_id) + '/comments')
+    fetch('/network/post/' + parseInt(post_id) + '/comments/')
         .then(response => response.json())
         .then(comments => {
             comments.forEach(comment => {
@@ -461,19 +461,22 @@ function write_comment(element) {
     let comment_text = element.querySelector('.comment-input').value;
     let comment_comments = element.parentElement.parentElement.parentElement.parentElement.querySelector('.comment-comments');
     let comment_count = comment_comments.parentElement.parentElement.parentElement.querySelector('.cmt-count');
+    const csrftoken = Cookies.get('csrftoken')
     if (comment_text.trim().length <= 0) {
         return false;
     }
-    fetch('/n/post/' + parseInt(post_id) + '/write_comment', {
+    fetch('/network/post/' + parseInt(post_id) + '/comments/', {
         method: 'POST',
+        headers: {'X-CSRFtoken': csrftoken},
         body: JSON.stringify({
             comment_text: comment_text
-        })
+        }),
+        mode: "same-origin"
     })
         .then(response => response.json())
         .then(comment => {
             console.log(comment);
-            element.querySelector('input').value = '';
+            element.querySelector('.comment-input').value = '';
             comment_count.innerHTML++;
             display_comment(comment[0], comment_comments, true);
             return false;
@@ -488,18 +491,18 @@ function display_comment(comment, container, new_comment = false) {
     eachrow.setAttribute('data-id', comment.id);
     eachrow.innerHTML = `
         <div>
-            <a href='/${comment.commenter.username}'>
-                <div class="small-profilepic" style="background-image: url(${comment.commenter.profile_pic})"></div>
+            <a href='/${comment.user.username}'>
+                <div class="small-profilepic" style="background-image: url(${comment.user.profile_pic})"></div>
             </a>
         </div>
         <div style="flex: 1;">
             <div class="comment-text-div">
                 <div class="comment-user">
-                    <a href="/${comment.commenter.username}">
-                        ${comment.commenter.first_name} ${comment.commenter.last_name}
+                    <a href="#">
+                        ${comment.user.username}
                     </a>
                 </div>
-                ${comment.body}
+                ${comment.content}
             </div>
         </div>`;
     if (new_comment) {
@@ -513,9 +516,14 @@ function display_comment(comment, container, new_comment = false) {
 
 
 function goto_register() {
-    window.location.href = '/register';
+    window.location.href = '/register/';
 }
 
 function goto_login() {
-    window.location.href = '/login';
+    window.location.href = '/login/';
+}
+
+function submit_logout(event){
+    event.preventDefault()
+    document.querySelector('.logout_form').submit()
 }

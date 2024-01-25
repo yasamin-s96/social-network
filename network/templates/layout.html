@@ -182,7 +182,7 @@
                                 </a>
                             </li>
                             <li class="nav-item" id="logout">
-                                <a href="}" class="nav-link">
+                                <a href="" class="nav-link" onclick="submit_logout(event)">
                                     <div>
                                         <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-door-open"
                                              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -198,7 +198,7 @@
                             </li>
                         {% else %}
                             <li class="nav-item" id="login">
-                                <a href="" class="nav-link">
+                                <a href="{% url 'login' %}" class="nav-link">
                                     <div>
                                         <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-door-closed"
                                              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -228,6 +228,9 @@
                             </li>
                         {% endif %}
                     </ul>
+                    <form action="{% url 'logout' %}" class="logout_form" method="post" style="display: none">
+                        {% csrf_token %}
+                    </form>
                 </div>
                 {% if user.is_authenticated %}
                     <button id="popup-btn" class="btn btn-success new-post-btn" onclick="createpost()">Create Post

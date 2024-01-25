@@ -1,10 +1,13 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.core import serializers
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import ListView
@@ -12,7 +15,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 
 from network import utils
-from network.models import Post
+from network.models import Post, Comment
 
 
 # Create your views here.
@@ -87,6 +90,19 @@ def post_save_unsave(request, post_id):
             return HttpResponse(f'Post unsaved by {user}', status=200)
 
     return HttpResponse(status=400)
+
+
+def post_comments(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+
+    if request.method == 'POST':
+        comment = json.loads(request.body.decode('utf-8'))
+        comment = Comment.objects.create(user=request.user, content=comment['comment_text'], post=post)
+        return JsonResponse([comment.serialize()], safe=False)
+
+    comments = post.comments.all()
+    data = [comment.serialize() for comment in comments]
+    return JsonResponse(data, safe=False)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')

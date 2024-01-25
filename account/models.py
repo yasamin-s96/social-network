@@ -8,6 +8,12 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     follows = models.ManyToManyField('self', symmetrical=False, blank=True)
 
+    def serialize(self):
+        return {
+            'username': f'{self.first_name} {self.last_name}'.title() if self.first_name else self.username.title(),
+            'profile_pic': self.profile.profile_image.url
+        }
+
 
 def create_profile_image_path(instance, filename):
     return f'profile_images/{instance.user.id}/{filename}'

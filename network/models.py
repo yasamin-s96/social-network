@@ -36,3 +36,11 @@ class Comment(models.Model):
             models.Index(fields=('-commented_at',), name='commented_at_idx')
         ]
         ordering = ['-commented_at']
+
+    def serialize(self):
+        return {
+            'id': self.pk,
+            'user': self.user.serialize(),
+            'content': self.content,
+            'commented_at': self.commented_at.strftime('%I:%M %p %d %Y')
+        }
