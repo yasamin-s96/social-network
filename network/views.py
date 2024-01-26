@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 
@@ -92,6 +92,7 @@ def post_save_unsave(request, post_id):
     return HttpResponse(status=400)
 
 
+@login_required
 def post_comments(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
@@ -155,3 +156,5 @@ class SavedPostsView(LoginRequiredMixin, ListView):
             .prefetch_related('likes').filter(saved_by=user)
 
         return saved_posts
+
+

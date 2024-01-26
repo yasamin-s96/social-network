@@ -8,6 +8,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
+    path('<str:username>/', views.ProfileView.as_view(), name='profile'),
 
     # Reset password paths
     path('password-reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(),

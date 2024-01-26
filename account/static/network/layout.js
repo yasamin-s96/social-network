@@ -435,7 +435,8 @@ function show_comment(element) {
     let comment_div_data = comment_div.querySelector('.comment-div-data');
     let comment_comments = comment_div_data.querySelector('.comment-comments');
     if (comment_div.style.display === 'block') {
-        comment_div.querySelector('input').focus()
+        comment_div.style.display = 'none'
+        comment_comments.innerHTML = ''
         return;
     }
     comment_div.querySelector('#spinner').style.display = 'block';

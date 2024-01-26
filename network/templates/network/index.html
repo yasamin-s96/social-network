@@ -19,14 +19,15 @@
             </nav>
             <div class="left-div-content">
                 <div class="posts-view">
-                    {% block profile %}
-                    {% endblock %}
+                    {% if page == 'profile' %}
+                        {% include 'profile.html' with requested_user=requested_user user=user posts_count=posts_count following_count=following_count follower_count=follower_count %}
+                    {% endif %}
                     <div class="main-div-content">
                         {% for post in page_obj.object_list %}
                             <div class="post" data-post_id="{{ post.id }}">
                                 <div>
                                     <div>
-                                        <a href="#">
+                                        <a href="{% url 'profile' post.creator.username %}">
                                             <div class="small-profilepic"
                                                  style="background-image: url({{ post.creator.profile.profile_image.url }})"></div>
                                         </a>
@@ -34,19 +35,18 @@
                                     <div style="flex: 1">
                                         <div class="post-user">
                                             <div>
-                                                <a href="#">
+                                                <a href="{% url 'profile' post.creator.username %}">
                                                     <span>
                                                         <strong>
-                                                            {% if post.creator.first_name %}
-                                                                {{ post.creator.first_name|title }}
-                                                                {{ post.creator.last_name|title }}
+                                                            {% if post.creator.get_short_name %}
+                                                                {{ post.creator.get_full_name|title }}
                                                             {% else %}
                                                                 {{ post.creator.username|title }}
                                                             {% endif %}
                                                         </strong>
                                                     </span>
                                                 </a>
-                                                <a href="#">
+                                                <a href="{% url 'profile' post.creator.username %}">
                                                     <span class="grey">&nbsp;@{{ post.creator.username }}</span>
                                                 </a>
                                                 <span class="grey">&nbsp;&middot;&nbsp;&nbsp;{{ post.posted_at | date:"P M d Y" }}</span>
@@ -105,7 +105,8 @@
                                                                   d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
                                                         </svg>
                                                     </div>
-                                                    <div style="padding: 7px 0px;" class="likes_count">{{ post.likes_count }}</div>
+                                                    <div style="padding: 7px 0px;"
+                                                         class="likes_count">{{ post.likes_count }}</div>
                                                 </div>
                                             {% else %}
                                                 <div class="like" onclick="like_post(this)"
@@ -195,12 +196,16 @@
                                 </div>
                             </div>
                         {% empty %}
-                            {% block emptyprofile %}
-                            {% endblock %}
-                            {% if page == 'all_posts' %}
-                                <div class="text-align-center">
+                            {% if page == 'all_posts' or page == 'profile' %}
+                                <div class="text-center">
                                     <br>
-                                    <strong style="font-size: 1.2em;">Sorry! No one have posted anything yet.</strong>
+                                    <strong style="font-size: 1.2em;">
+                                        {% if page == 'all_posts' %}
+                                            Sorry! No one have posted anything yet.
+                                        {% else %}
+                                            @{{ requested_user.username }} hasn't posted
+                                        {% endif %}
+                                    </strong>
                                     <div class="grey" style="font-size: .9em;">When they do, their posts will show up
                                         here.
                                     </div>
