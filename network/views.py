@@ -89,7 +89,7 @@ def post_save_unsave(request, post_id):
             post.saved_by.remove(user)
             return HttpResponse(f'Post unsaved by {user}', status=200)
 
-    return HttpResponse(status=400)
+    return HttpResponse(status=405)
 
 
 @login_required

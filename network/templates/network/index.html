@@ -20,7 +20,7 @@
             <div class="left-div-content">
                 <div class="posts-view">
                     {% if page == 'profile' %}
-                        {% include 'profile.html' with requested_user=requested_user user=user posts_count=posts_count following_count=following_count follower_count=follower_count %}
+                        {% include 'profile.html' with requested_user=requested_user posts_count=posts_count following_count=following_count follower_count=follower_count %}
                     {% endif %}
                     <div class="main-div-content">
                         {% for post in page_obj.object_list %}

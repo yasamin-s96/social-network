@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.http import Http404
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -33,6 +34,30 @@ def register(request):
         profile_form = ProfileForm()
 
     return render(request, 'registration/register.html', {'auth_form': auth_form, 'profile_form': profile_form})
+
+
+@login_required
+def user_follow_unfollow(request, username):
+    user_model = get_user_model()
+    action_user = request.user
+    target_user = get_object_or_404(user_model, username=username)
+
+    if request.method == 'POST':
+        # User is not allowed to follow themselves
+        if action_user != target_user:
+            action_user.follows.add(target_user)
+            return HttpResponse(status=200)
+
+        else:
+            return HttpResponse(status=401)
+
+    if request.method == 'DELETE':
+        action_user.follows.remove(target_user)
+        return HttpResponse(status=200)
+
+    return HttpResponse(status=405)
+
+
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')

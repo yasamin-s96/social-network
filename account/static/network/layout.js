@@ -348,18 +348,17 @@ function unsave_post(element) {
         headers: {'X-CSRFToken': csrftoken},
         mode: "same-origin"
     })
-    .then((response) => {
-        if (response.ok) {
-            element.querySelector('.svg-span').innerHTML = `
+        .then((response) => {
+            if (response.ok) {
+                element.querySelector('.svg-span').innerHTML = `
         <svg width="1.1em" height="1.1em" viewBox="0.5 0 15 15" class="bi bi-bookmark" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M8 12l5 3V3a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12l5-3zm-4 1.234l4-2.4 4 2.4V3a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10.234z"/>
         </svg>`;
-            element.setAttribute('onclick', 'save_post(this)');
-        }
-        else {
-            console.log('Request not accepted.')
-        }
-    });
+                element.setAttribute('onclick', 'save_post(this)');
+            } else {
+                console.log('Request not accepted.')
+            }
+        });
 }
 
 
@@ -368,27 +367,35 @@ function follow_user(element, username, origin) {
         login_popup('follow');
         return false;
     }
-    fetch('/' + username + '/follow', {
-        method: 'PUT'
-    })
-        .then(() => {
-            if (origin === 'suggestion') {
-                element.parentElement.innerHTML = `<button class="btn btn-success" type="button" onclick="unfollow_user(this,'${username}','suggestion')">Following</button>`;
-            } else if (origin === 'edit_page') {
-                element.parentElement.innerHTML = `<button class="btn btn-success float-right" onclick="unfollow_user(this,'${username}','edit_page')" id="following-btn">Following</button>`;
-            } else if (origin === 'dropdown') {
-                ////////////////////////////////////////////////////////////////////////////////////////////
-            }
 
-            if (document.querySelector('.body').dataset.page === 'profile') {
-                if (document.querySelector('.profile-view').dataset.user === username) {
-                    document.querySelector('#follower__count').innerHTML++;
+    const csrftoken = Cookies.get('csrftoken');
+
+    fetch('/' + username + '/follow/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken},
+        mode: "same-origin"
+    })
+        .then((response) => {
+            if (response.ok) {
+                if (origin === 'suggestion') {
+                    element.parentElement.innerHTML = `<button class="btn btn-success" type="button" onclick="unfollow_user(this,'${username}','suggestion')">Following</button>`;
+                } else if (origin === 'edit_page') {
+                    element.parentElement.innerHTML = `<button class="btn btn-success float-right" onclick="unfollow_user(this,'${username}','edit_page')" id="following-btn">Following</button>`;
+                } else if (origin === 'dropdown') {
+                    ////////////////////////////////////////////////////////////////////////////////////////////
                 }
-            }
-            if (document.querySelector('.body').dataset.page === 'profile') {
-                if (document.querySelector('.profile-view').dataset.user === document.querySelector('#user_is_authenticated').dataset.username) {
-                    document.querySelector('#following__count').innerHTML++;
+                if (document.querySelector('.body').dataset.page === 'profile') {
+                    if (document.querySelector('.profile-view').dataset.user === username) {
+                        document.querySelector('#follower__count').innerHTML++;
+                    }
                 }
+                if (document.querySelector('.body').dataset.page === 'profile') {
+                    if (document.querySelector('.profile-view').dataset.user === document.querySelector('#user_is_authenticated').dataset.username) {
+                        document.querySelector('#following__count').innerHTML++;
+                    }
+                }
+            } else {
+                console.log(response.statusText)
             }
         });
 }
@@ -398,27 +405,37 @@ function unfollow_user(element, username, origin) {
         login_popup('follow');
         return false;
     }
-    fetch('/' + username + '/unfollow', {
-        method: 'PUT'
-    })
-        .then(() => {
-            if (origin === 'suggestion') {
-                element.parentElement.innerHTML = `<button class="btn btn-outline-success" type="button" onclick="follow_user(this,'${username}','suggestion')">Follow</button>`;
-            } else if (origin === 'edit_page') {
-                element.parentElement.innerHTML = `<button class="btn btn-outline-success float-right" onclick="follow_user(this,'${username}','edit_page')" id="follow-btn">Follow</button>`;
-            } else if (origin === 'dropdown') {
-                ///////////////////////////////////////////////////////////////////////////////////////////
-            }
 
-            if (document.querySelector('.body').dataset.page === 'profile') {
-                if (document.querySelector('.profile-view').dataset.user === username) {
-                    document.querySelector('#follower__count').innerHTML--;
+    const csrftoken = Cookies.get('csrftoken');
+
+    fetch('/' + username + '/unfollow/', {
+        method: 'DELETE',
+        headers: {'X-CSRFToken': csrftoken},
+        mode: "same-origin"
+    })
+        .then((response) => {
+            if (response.ok){
+                if (origin === 'suggestion') {
+                    element.parentElement.innerHTML = `<button class="btn btn-outline-success" type="button" onclick="follow_user(this,'${username}','suggestion')">Follow</button>`;
+                } else if (origin === 'edit_page') {
+                    element.parentElement.innerHTML = `<button class="btn btn-outline-success float-right" onclick="follow_user(this,'${username}','edit_page')" id="follow-btn">Follow</button>`;
+                } else if (origin === 'dropdown') {
+                    ///////////////////////////////////////////////////////////////////////////////////////////
+                }
+
+                if (document.querySelector('.body').dataset.page === 'profile') {
+                    if (document.querySelector('.profile-view').dataset.user === username) {
+                        document.querySelector('#follower__count').innerHTML--;
+                    }
+                }
+                if (document.querySelector('.body').dataset.page === 'profile') {
+                    if (document.querySelector('.profile-view').dataset.user === document.querySelector('#user_is_authenticated').dataset.username) {
+                        document.querySelector('#following__count').innerHTML--;
+                    }
                 }
             }
-            if (document.querySelector('.body').dataset.page === 'profile') {
-                if (document.querySelector('.profile-view').dataset.user === document.querySelector('#user_is_authenticated').dataset.username) {
-                    document.querySelector('#following__count').innerHTML--;
-                }
+            else{
+                console.log(response.statusText)
             }
         });
 }
@@ -524,7 +541,7 @@ function goto_login() {
     window.location.href = '/login/';
 }
 
-function submit_logout(event){
+function submit_logout(event) {
     event.preventDefault()
     document.querySelector('.logout_form').submit()
 }
