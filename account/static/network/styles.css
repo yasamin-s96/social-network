@@ -203,7 +203,8 @@ svg{
     background-repeat: no-repeat;
 }
 
-#spinner{
+#spinner,
+.spinner {
     position:relative;
     top: 50%;
     left: 50%;
@@ -437,7 +438,8 @@ svg{
     max-height: 75vh;
     overflow: hidden;
 }
-.comment-div #spinner{
+.comment-div #spinner,
+.spinner{
     transform: translate(-50%, 0%);
 }
 .comment-div > div{
@@ -539,9 +541,6 @@ svg{
     z-index: 0;
 }
 
-
-
-
 .right-div{
     width: 28%;
     height: 100vh;
@@ -564,7 +563,7 @@ svg{
     padding-right: 10px;
     vertical-align: middle;
 }
-#search-box{
+#searchInput{
     height: 5.7vh;
     border: none;
     background: none;
@@ -572,10 +571,14 @@ svg{
     width: 100%;
     margin-left: 8px;
 }
-#search-box::placeholder{
+#searchInput::placeholder{
     color: #6d7e8c;
 }
 
+.search-results {
+    position: absolute;
+    width: 90%;
+}
 
 .right-div-content{
     height: 92.5vh;

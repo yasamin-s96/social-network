@@ -2,13 +2,14 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Count
-from django.http import HttpResponse
+from django.db.models import Count, Q
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.generic import DetailView
+from django.views.decorators.http import require_GET
+from django.views.generic import DetailView, ListView
 
 from .forms import RegistrationForm, ProfileForm
 
@@ -58,6 +59,14 @@ def user_follow_unfollow(request, username):
     return HttpResponse(status=405)
 
 
+@require_GET
+def users_search(request):
+    user_model = get_user_model()
+    query = request.GET.get('q')
+    users = user_model.objects.filter(
+        Q(username__istartswith=query) | Q(first_name__istartswith=query) | Q(last_name__istartswith=query))
+    users_list = [user.serialize() for user in users]
+    return JsonResponse(users_list, safe=False)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
@@ -72,7 +81,7 @@ class ProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        posts = self.object.posts.annotate(likes_count=Count('likes'))
+        posts = self.object.posts.annotate(likes_count=Count('likes')).order_by('-posted_at')
         posts_paginator = Paginator(posts, 10)
         context['page_obj'] = posts_paginator.get_page(self.kwargs.get('page'))
         context['posts_count'] = posts.count()

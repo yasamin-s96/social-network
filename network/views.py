@@ -117,7 +117,8 @@ class AllPostsView(ListView):
         return context
 
     def get_queryset(self):
-        posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator').prefetch_related('likes')
+        posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator').prefetch_related(
+            'likes').order_by('-posted_at')
         return posts
 
 
@@ -135,7 +136,7 @@ class FollowingPostsView(LoginRequiredMixin, ListView):
         user = self.request.user
         following_users_ids = user.follows.values_list('id', flat=True)
         following_users_posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator') \
-            .prefetch_related('likes').filter(creator__id__in=following_users_ids)
+            .prefetch_related('likes').filter(creator__id__in=following_users_ids).order_by('-posted_at')
 
         return following_users_posts
 
@@ -153,8 +154,7 @@ class SavedPostsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         saved_posts = Post.objects.annotate(likes_count=Count('likes')).select_related('creator') \
-            .prefetch_related('likes').filter(saved_by=user)
+            .prefetch_related('likes').filter(saved_by=user).order_by('-posted_at')
 
         return saved_posts
-
 

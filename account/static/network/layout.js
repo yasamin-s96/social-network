@@ -414,7 +414,7 @@ function unfollow_user(element, username, origin) {
         mode: "same-origin"
     })
         .then((response) => {
-            if (response.ok){
+            if (response.ok) {
                 if (origin === 'suggestion') {
                     element.parentElement.innerHTML = `<button class="btn btn-outline-success" type="button" onclick="follow_user(this,'${username}','suggestion')">Follow</button>`;
                 } else if (origin === 'edit_page') {
@@ -433,8 +433,7 @@ function unfollow_user(element, username, origin) {
                         document.querySelector('#following__count').innerHTML--;
                     }
                 }
-            }
-            else{
+            } else {
                 console.log(response.statusText)
             }
         });
@@ -509,7 +508,7 @@ function display_comment(comment, container, new_comment = false) {
     eachrow.setAttribute('data-id', comment.id);
     eachrow.innerHTML = `
         <div>
-            <a href='/${comment.user.username}'>
+            <a href='/${comment.user.display_name}'>
                 <div class="small-profilepic" style="background-image: url(${comment.user.profile_pic})"></div>
             </a>
         </div>
@@ -517,7 +516,7 @@ function display_comment(comment, container, new_comment = false) {
             <div class="comment-text-div">
                 <div class="comment-user">
                     <a href="#">
-                        ${comment.user.username}
+                        ${comment.user.display_name}
                     </a>
                 </div>
                 ${comment.content}
@@ -532,6 +531,52 @@ function display_comment(comment, container, new_comment = false) {
     }
 }
 
+function search_users(e) {
+    let searchQuery = e.target.value;
+    let mainResultsDiv = document.getElementById('searchResults');
+    let resultsDiv = document.querySelector('.results')
+    if (searchQuery.length > 0) {
+        mainResultsDiv.querySelector('.spinner').style.display = 'block';
+        fetch('/search-users?q=' + encodeURIComponent(searchQuery))
+            .then(response => response.json())
+            .then(users => {
+                // Populate the searchResults div with div
+                mainResultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = '';
+                users.forEach(user => {
+                    let userDiv = document.createElement('div');
+                    userDiv.className = 'd-flex user-result'
+                    userDiv.innerHTML = `                                                                   
+                        <a href="/${user.username}" class="nav-link">
+                            <div class="user_account">
+                                <div class="small-profilepic"
+                                     style="float: left; background-image: url(${user.profile_pic})"></div>
+                                <div style="height: 2.7vw; margin: auto;">
+                                    <div style="margin-top: 4px;">
+                                        <strong>${user.display_name}</strong>
+                                    </div>
+                                    <div class="grey" style="margin-top: 4px;">@${user.username}</div>
+                                </div>
+                            </div>
+                        </a>  
+                            `
+                    resultsDiv.appendChild(userDiv)
+                });
+            })
+            .then(() => {
+                setTimeout(() => {
+                    mainResultsDiv.querySelector('.spinner-div').style.display = 'none';
+                    mainResultsDiv.style.overflow = 'auto';
+                }, 500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    } else {
+        mainResultsDiv.style.display = 'none';
+
+    }
+}
 
 function goto_register() {
     window.location.href = '/register/';

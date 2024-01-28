@@ -12,7 +12,8 @@ class User(AbstractUser):
 
     def serialize(self):
         return {
-            'username': f'{self.get_full_name()}'.title() if self.first_name else self.username.title(),
+            'display_name': f'{self.get_full_name()}'.title() if self.first_name else self.username.title(),
+            'username': self.username,
             'profile_pic': self.profile.profile_image.url
         }
 

@@ -41,14 +41,15 @@
     <div class="large-popup">
         <div>
             <div>
-                <div class="small-profilepic" style="background-image: url(/media/{{ user.profile_pic }});"></div>
+                <div class="small-profilepic"
+                     style="background-image: url({{ user.profile.profile_image.url }});"></div>
             </div>
             <div class="form-area">
                 <form action="{% url "network:post_create" %}" method="POST" class="newpost"
                       enctype="multipart/form-data">
                     {% csrf_token %}
                     <textarea name="text" autofocus placeholder="What's happening?" rows="5" id="post-text"></textarea>
-                    <input type="hidden" id="img-change" value="false"></input>
+                    <input type="hidden" id="img-change" value="false">
                     <div id='img-div'>
                         <button id="del-img" type='button'>
                             <svg width="1.55em" height="1.55em" viewBox="0 0 24 24"
@@ -274,7 +275,7 @@
 
     <div class="right-div">
         <nav class="head">
-            <form action="#">
+            <form>
                 <div class="search-div">
                     <div>
                         <svg width="1em" height="1.6em" viewBox="0 0 16 6" class="bi bi-search" fill="#6d7e8c"
@@ -285,52 +286,19 @@
                                   d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
                         </svg>
                     </div>
-                    <input type="text" name="query" id="search-box" placeholder="Search Network">
+                    <input type="text" id="searchInput" placeholder="Search users..." oninput="search_users(event)">
                 </div>
             </form>
+            <div id="searchResults" class="search-results bg-white" style="display: none;">
+                <div class="spinner-div">
+                    <img src="{% static 'network/Images/spinner.gif' %}" class="spinner" height="65px">
+                </div>
+                <div class="results w-100"></div>
+            </div>
         </nav>
         <div class='right-div-content'>
             <div class="space" style="background-color: white;"></div>
-            {% if user.is_authenticated %}
-                <div class="suggestion-box">
-                    <div class="suggestion-header">
-                        You might know
-                    </div>
-                    {% for suggestion in suggestions %}
-                        <div class="suggestion-user">
-                            <div>
-                                <a href="{% url 'profile' suggestion.username %}">
-                                    <div class="small-profilepic"
-                                         style="background-image: url(/media/{{ suggestion.profile_pic }})"></div>
-                                </a>
-                            </div>
-                            <div class="user-details">
-                                <a href="{% url 'profile' suggestion.username %}">
-                                    <div id="user-name">
-
-                                        <strong>
-                                            {{ suggestion.first_name }} {{ suggestion.last_name }}
-                                        </strong>
-                                    </div>
-                                    <div class="grey">@{{ suggestion.username }}</div>
-                                </a>
-                            </div>
-                            <div>
-                                <button class="btn btn-outline-success" type="button"
-                                        onclick="follow_user(this,'{{ suggestion.username }}','suggestion')">Follow
-                                </button>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <div style="text-align: center; border-bottom: .5px solid #e6ecf0; padding: 10px 15px;">
-                            <span class="grey" style="font-size: .9em;">No suggestions available.</span>
-                        </div>
-                    {% endfor %}
-                    <div class="suggestion-footer">
-                        <a href="#">Show more</a>
-                    </div>
-                </div>
-            {% else %}
+            {% if not user.is_authenticated %}
                 <div class="guest-box">
                     <center>
                         <div class="guest-header">
