@@ -33,15 +33,17 @@ function createpost() {
     document.querySelector('body').style.overflow = "hidden";
     document.querySelector('#insert-img').onchange = previewFile;
     popup.querySelector('.large-popup').querySelector('form').setAttribute('onsubmit', '');
-    popup.querySelector('.large-popup').querySelector("#post-text").addEventListener('input', (event) => {
-        if (event.target.value.trim().length > 0) {
-            popup.querySelector('.submit-btn').disabled = false;
-        } else if (event.target.parentElement.querySelector('#img-div').style.backgroundImage) {
-            popup.querySelector('.submit-btn').disabled = false;
-        } else {
-            popup.querySelector('.submit-btn').disabled = true;
-        }
-    });
+    // popup.querySelector('.large-popup').querySelector("#post-text").addEventListener('input', (event) => {
+    //     if (event.target.value.trim().length > 0) {
+    //         popup.querySelector('.submit-btn').disabled = false;
+    //     } else if (event.target.parentElement.querySelector('#img-div').style.backgroundImage) {
+    //         popup.querySelector('.submit-btn').disabled = false;
+    //     } else if (event.target.parentElement.querySelector('#img-div').style.backgroundImage) {
+    //         popup.querySelector('.submit-btn').disabled = false;
+    //     } else {
+    //         popup.querySelector('.submit-btn').disabled = true;
+    //     }
+    // });
 }
 
 function confirm_delete(id) {
@@ -577,6 +579,8 @@ function search_users(e) {
 
     }
 }
+
+
 
 function goto_register() {
     window.location.href = '/register/';

@@ -25,13 +25,14 @@ from network.models import Post, Comment
 def post_create(request):
     text = request.POST.get('text')
     picture = request.FILES.get('picture')
+    video = request.FILES.get('video')
 
-    if not (text or picture):
+    if not (text or picture or video):
         messages.error(request, 'Error: the post can not be entirely empty.')
 
     else:
         try:
-            utils.manage_post_creation(request.user, text, picture)
+            utils.manage_post_creation(request.user, text, picture, video)
         except ValidationError as e:
             utils.manage_exception_object(request, e)
         else:

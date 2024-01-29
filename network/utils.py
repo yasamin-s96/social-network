@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from .models import Post
 
 
-def manage_post_creation(user, text, picture):
+def manage_post_creation(user, text, picture, video):
     new_post = Post(creator=user)
 
     if text:
@@ -12,6 +12,9 @@ def manage_post_creation(user, text, picture):
 
     if picture:
         new_post.image_content = picture
+
+    if video:
+        new_post.video_content = video
 
     new_post.full_clean()
     new_post.save()

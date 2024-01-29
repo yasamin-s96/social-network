@@ -5,7 +5,7 @@ from .models import Post, Comment
 # Register your models here.
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['creator', 'text_content', 'image_content']
+    list_display = ['creator', 'text_content', 'image_content', 'video_content']
 
 
 @admin.register(Comment)

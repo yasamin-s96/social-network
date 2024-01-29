@@ -82,16 +82,34 @@
                                                 </div>
                                             {% endif %}
                                         </div>
-                                        {% if post.text_content is not None %}
+                                        {% if post.text_content %}
                                             <div class="post-content">
                                                 {{ post.text_content | linebreaksbr }}
                                             </div>
                                         {% endif %}
-                                        {% if post.image_content %}
+                                        {% if post.image_content and post.video_content %}
+                                            <div class="d-flex align-items-center">
+                                                <div class="post-image w-50 me-2"
+                                                     style="background-image: url({{ post.image_content.url }});">
+
+                                                </div>
+                                                <video id="plyr-video-player" class="w-50 ms-2 rounded-2" playsinline controls>
+                                                    <source src="{{ post.video_content.url }}"
+                                                            type="video/mp4"/>
+                                                </video>
+
+                                            </div>
+                                        {% elif post.image_content %}
                                             <div class="post-image"
-                                                 style="background-image: url({{ post.image_content.url }});"></div>
-                                        {% else %}
-                                            <div class="post-image" style="display: none;"></div>
+                                                 style="background-image: url({{ post.image_content.url }}); background-size: cover">
+
+                                            </div>
+                                        {% elif post.video_content %}
+                                            <video class="me-2 mt-2 w-100 rounded-2"
+                                                   id="plyr-video-player" playsinline controls>
+                                                <source src="{{ post.video_content.url }}"
+                                                        type="video/mp4"/>
+                                            </video>
                                         {% endif %}
                                         <div class="post-actions">
                                             {% if user in post.likes.all %}
